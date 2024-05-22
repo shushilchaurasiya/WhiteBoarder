@@ -19,6 +19,8 @@ class Program
             // Adds boarder
             var shrinkedFile = AddWhiteBoarder(inputFile, outputPath, boarderPtg);
 
+
+            // Create a folder to keep labelled images.
             var labeledFilePath = Path.Combine(Path.GetDirectoryName(shrinkedFile), "Labelled", fileName);
 
             if (!Directory.Exists(Path.GetDirectoryName(labeledFilePath)))
@@ -85,11 +87,13 @@ class Program
         using (Graphics g = Graphics.FromImage(image))
         {
             // define your font and color
-            Font font = new Font("Arial", 20);
+            float fontSize = image.Height * 0.02f; // 2% of image height.
+            Font font = new Font("Arial", fontSize);
             SolidBrush brush = new SolidBrush(Color.Black);
 
-            // Define where teh text will be placed
-            PointF point = new PointF(image.Width / 2, image.Height / 2);
+            // Define where the text will be placed
+            SizeF textSize = g.MeasureString(text, font);
+            PointF point = new PointF((image.Width - textSize.Width) / 2, image.Height - image.Height * 0.05f);
 
             // Draw the text on the image.
             g.DrawString(text, font, brush, point);

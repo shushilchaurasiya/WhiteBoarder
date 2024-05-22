@@ -17,7 +17,12 @@ class Program
             string outputPath = Path.Combine(outputFolderPath, fileName);
 
             // Adds boarder
-            AddWhiteBoarder(inputFile, outputPath, boarderPtg);
+            var shrinkedFile = AddWhiteBoarder(inputFile, outputPath, boarderPtg);
+
+            var labeledFilePath = Path.Combine(Path.GetDirectoryName(shrinkedFile), "Labelled", fileName);
+
+            // Write Text on image.
+            WriteTextOnImage(shrinkedFile, labeledFilePath, "Sample Text");
         }
 
         Console.WriteLine("Images processed successfully.");
@@ -42,7 +47,7 @@ class Program
         return (inputFolderPath, outputFolderPath, boarderPtg);
     }
 
-    static void AddWhiteBoarder(string inputFile, string outputPath, double boarderPercentage = 5)
+    static string AddWhiteBoarder(string inputFile, string outputPath, double boarderPercentage = 5)
     {
         using (Image image = Image.FromFile(inputFile))
         {
@@ -68,9 +73,29 @@ class Program
                 }
             }
         }
+        return outputPath;
     }
 
+    static void WriteTextOnImage(string imagePath, string outputPath, string text)
+    {
+        using (Image image = Image.FromFile(imagePath))
+        using (Graphics g = Graphics.FromImage(image))
+        {
+            // define your font and color
+            Font font = new Font("Arial", 20);
+            SolidBrush brush = new SolidBrush(Color.Black);
 
+            // Define where teh text will be placed
+            PointF point = new PointF(image.Width / 2, image.Height / 2);
+
+            // Draw the text on the image.
+            g.DrawString(text, font, brush, point);
+
+            // Save the new image to the output path.
+            image.Save(outputPath, ImageFormat.Jpeg);
+        }
+
+    }
 
 
 

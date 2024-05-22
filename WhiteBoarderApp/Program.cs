@@ -21,6 +21,9 @@ class Program
 
             var labeledFilePath = Path.Combine(Path.GetDirectoryName(shrinkedFile), "Labelled", fileName);
 
+            if (!Directory.Exists(Path.GetDirectoryName(labeledFilePath)))
+                Directory.CreateDirectory(Path.GetDirectoryName(labeledFilePath));
+
             // Write Text on image.
             WriteTextOnImage(shrinkedFile, labeledFilePath, "Sample Text");
         }

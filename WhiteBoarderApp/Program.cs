@@ -27,7 +27,9 @@ class Program
                 Directory.CreateDirectory(Path.GetDirectoryName(labeledFilePath));
 
             // Write Text on image.
-            WriteTextOnImage(shrinkedFile, labeledFilePath, "Sample Text");
+            WriteTextOnImage(shrinkedFile, labeledFilePath, "@heyimsp_404");
+
+            //ReadExifData(inputFile);
         }
 
         Console.WriteLine("Images processed successfully.");
@@ -104,7 +106,35 @@ class Program
 
     }
 
+    static void ReadExifData(string imagePath)
+    {
+        using (Image image = Image.FromFile(imagePath))
+        {
+            // PropertyTagExifISOSpeed = 0x8827
+            // PropertyTagExifFNumber = 0x829D
+            // PropertyTagExifExposureTime = 0x829A
+            int[] propertyTags = { 0x001F, 0x8827, 0x829D, 0x829A };
 
+            foreach (int propertyTag in propertyTags)
+            {
+                try
+                {
+                    var propItem = image.GetPropertyItem(propertyTag);
+                    if (propItem != null)
+                    {
+                        // The value is stored as a Rational (two 32-bit unsigned integers)
+                        uint numerator = BitConverter.ToUInt32(propItem.Value, 0);
+                        uint denominator = BitConverter.ToUInt32(propItem.Value, 4);
+                        Console.WriteLine($"\n\nProperty {propertyTag:X}: {numerator}/{denominator}");
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine($"Property {propertyTag:X} not found");
+                }
+            }
+        }
 
+    }
 }
 
